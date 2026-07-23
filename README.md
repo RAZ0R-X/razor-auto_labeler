@@ -1,8 +1,6 @@
 # RAZOR Auto Labeler
 
-<p align="center">
-  <img src="assets/logo.svg" alt="RAZOR Logo" width="90">
-</p>
+
 
 <p align="center">
   <strong>Automatic image annotation for YOLO models.</strong>
@@ -99,6 +97,7 @@ python main.py
 - YOLOv9
 - YOLOv11
 - YOLOv12
+- YOLOv26
 - YOLO OBB
 
 ### Other Formats
