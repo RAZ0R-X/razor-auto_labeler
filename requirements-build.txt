@@ -1,0 +1,2 @@
+# Build dependencies (optional — for creating the Windows installer)
+pyinstaller>=6.0.0

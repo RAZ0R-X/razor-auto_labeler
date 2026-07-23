@@ -1,0 +1,10 @@
+Welcome to RAZOR Auto Labeler Setup!
+
+This installer will install RAZOR Auto Labeler v1.0.0 on your computer.
+
+RAZOR Auto Labeler is a desktop application for automatic image labeling using YOLO object detection models. It supports 20+ export formats including YOLOv8, YOLOv11, COCO, Pascal VOC, and more.
+
+After installation, launch the app from the Start Menu or Desktop shortcut. You will need your own trained YOLO model (.pt file) to start labeling.
+
+For documentation and support, visit:
+https://github.com/RAZ0R-X/razor-labeler

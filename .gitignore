@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Project-specific
+*.pt
+*.onnx
+*.engine
+*.torchscript
+*.tflite
+labels/
+output/
+runs/
+*.log
+
+# Generated assets (optional — run scripts/build_logo_ico.py to regenerate)
+# assets/logo.ico
+
+# Build output
+dist/
+build/RAZOR-AutoLabeler/
+*.spec.bak
+
+# Demo / temp files for screenshot capture
+docs/demo_images/
+docs/yolov8n.pt
