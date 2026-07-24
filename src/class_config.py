@@ -1,4 +1,4 @@
-"""Class mapping: model class IDs to custom export names."""
+
 
 from __future__ import annotations
 

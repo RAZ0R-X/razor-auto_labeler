@@ -1,4 +1,3 @@
-"""Dialog for selecting and renaming export classes."""
 
 from __future__ import annotations
 
@@ -64,7 +63,6 @@ class _ClassRow(QWidget):
 
 
 class ClassSelectorDialog(QDialog):
-    """Pick detections to include and set custom export names."""
 
     def __init__(
         self,

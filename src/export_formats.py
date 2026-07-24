@@ -1,4 +1,3 @@
-"""Export format definitions and grouping (Roboflow-compatible list)."""
 
 from __future__ import annotations
 
@@ -91,7 +90,6 @@ def default_export_format() -> str:
 
 
 def populate_format_combo(combo) -> None:
-    """Fill a QComboBox with grouped, non-selectable section headers."""
     from PyQt6.QtGui import QFont, QStandardItem, QStandardItemModel
 
     model = QStandardItemModel()

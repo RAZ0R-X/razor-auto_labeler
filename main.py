@@ -1,4 +1,3 @@
-"""Razor Auto Labeler entry point."""
 
 import sys
 

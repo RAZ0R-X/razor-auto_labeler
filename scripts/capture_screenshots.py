@@ -1,4 +1,4 @@
-"""Capture application screenshots for GitHub documentation."""
+
 
 from __future__ import annotations
 

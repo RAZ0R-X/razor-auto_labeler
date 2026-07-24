@@ -1,4 +1,3 @@
-"""Export detections to multiple annotation formats."""
 
 from __future__ import annotations
 
@@ -147,7 +146,6 @@ class BatchExporter(ABC):
 
 
 class CocoExporter(BatchExporter):
-    """Accumulates annotations and writes a single COCO JSON file."""
 
     def __init__(self, class_names: dict[int, str]) -> None:
         self.class_names = class_names
