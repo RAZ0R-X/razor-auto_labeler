@@ -24,7 +24,7 @@ class AddClassDialog(QDialog):
         parent=None,
     ):
         super().__init__(parent)
-        self.setWindowTitle("Sınıf Ekle")
+        self.setWindowTitle("Add Class")
         self.setMinimumWidth(420)
         self._model_class_names = model_class_names
         self._existing = existing_export_names
@@ -33,27 +33,27 @@ class AddClassDialog(QDialog):
         layout = QVBoxLayout(self)
         layout.setSpacing(12)
 
-        title = QLabel("Etiketlenecek sınıfı ekleyin")
+        title = QLabel("Add a class to label")
         title.setStyleSheet(f"font-size: 16px; font-weight: 700; color: {COLORS['text']};")
         layout.addWidget(title)
 
         hint = QLabel(
-            "YOLO-World modeli: sadece istediğiniz sınıf adını yazın, model metne göre arar."
+            "YOLO-World model: type the class name you want; the model searches by that text."
             if open_vocabulary
-            else "Export ismi etiket dosyalarında görünür.\n"
-            "Model sınıfı, modelin görüntüde arayacağı nesne türüdür."
+            else "The export name appears in label files.\n"
+            "The model class is the object type the model will look for in the image."
         )
         hint.setWordWrap(True)
         hint.setStyleSheet(f"color: {COLORS['text_muted']}; font-size: 12px;")
         layout.addWidget(hint)
 
-        layout.addWidget(QLabel("Export ismi (istediğiniz ad)"))
+        layout.addWidget(QLabel("Export name (your label)"))
         self.export_edit = QLineEdit()
-        self.export_edit.setPlaceholderText("ör. forklift, baret, insan...")
+        self.export_edit.setPlaceholderText("e.g. forklift, helmet, person...")
         self.export_edit.textChanged.connect(self._auto_match_model_class)
         layout.addWidget(self.export_edit)
 
-        self.model_label = QLabel("Model sınıfı (algılanacak nesne)")
+        self.model_label = QLabel("Model class (object to detect)")
         layout.addWidget(self.model_label)
         self.model_combo = QComboBox()
         for class_id, name in sorted(model_class_names.items()):
@@ -88,10 +88,10 @@ class AddClassDialog(QDialog):
     def _validate_and_accept(self) -> None:
         export_name = self.export_edit.text().strip()
         if not export_name:
-            self.error_label.setText("Export ismi boş olamaz.")
+            self.error_label.setText("Export name cannot be empty.")
             return
         if export_name.lower() in {name.lower() for name in self._existing}:
-            self.error_label.setText("Bu isim zaten ekli.")
+            self.error_label.setText("This name is already added.")
             return
         self.error_label.setText("")
         self.accept()

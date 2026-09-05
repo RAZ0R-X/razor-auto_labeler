@@ -1,5 +1,9 @@
 """Razor black/red theme constants and stylesheets."""
 
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QColor, QPainter, QPen
+from PyQt6.QtWidgets import QProxyStyle, QStyle
+
 COLORS = {
     "bg_dark": "#080808",
     "bg_panel": "#111111",
@@ -59,13 +63,38 @@ QLabel#sectionLabel {{
     letter-spacing: 1.5px;
 }}
 
+QLabel#hintLabel {{
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0px;
+    color: {COLORS["text_muted"]};
+}}
+
+QLabel#fieldLabel {{
+    font-size: 12px;
+    color: {COLORS["text"]};
+    font-weight: 500;
+}}
+
+QLabel#statValue {{
+    font-size: 13px;
+    font-weight: 600;
+    color: {COLORS["text"]};
+}}
+
+QLabel#emptyHint {{
+    font-size: 13px;
+    color: {COLORS["text_muted"]};
+    padding: 28px 16px;
+}}
+
 QLabel#statusOk {{
     color: {COLORS["success_glow"]};
     font-weight: 600;
     font-size: 13px;
 }}
 
-QFrame#panel {{
+QFrame#panel, QFrame#optionsPanel {{
     background-color: {COLORS["bg_panel"]};
     border: 1px solid {COLORS["border_soft"]};
     border-radius: 14px;
@@ -76,6 +105,30 @@ QFrame#accentPanel {{
     border: 1px solid {COLORS["border_soft"]};
     border-top: 2px solid {COLORS["accent"]};
     border-radius: 14px;
+}}
+
+QFrame#optionCard {{
+    background-color: {COLORS["bg_card"]};
+    border: 1px solid {COLORS["border_soft"]};
+    border-radius: 12px;
+}}
+
+QFrame#statChip {{
+    background-color: {COLORS["bg_card"]};
+    border: 1px solid {COLORS["border_soft"]};
+    border-radius: 10px;
+}}
+
+QFrame#optionCard QLabel,
+QFrame#statChip QLabel,
+QFrame#panel QLabel,
+QFrame#optionsPanel QLabel,
+QFrame#accentPanel QLabel {{
+    background: transparent;
+}}
+
+QStackedWidget {{
+    background: transparent;
 }}
 
 QPushButton {{
@@ -128,16 +181,35 @@ QPushButton#ghostButton:hover {{
 }}
 
 QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox {{
-    background-color: {COLORS["bg_card"]};
+    background-color: {COLORS["bg_elevated"]};
     color: {COLORS["text"]};
     border: 1px solid {COLORS["border"]};
     border-radius: 8px;
-    padding: 9px 12px;
+    padding: 8px 12px;
     selection-background-color: {COLORS["accent"]};
+    min-height: 18px;
+}}
+
+QSpinBox, QDoubleSpinBox {{
+    padding-right: 4px;
+    min-width: 78px;
 }}
 
 QLineEdit:focus, QComboBox:focus, QSpinBox:focus, QDoubleSpinBox:focus {{
     border-color: {COLORS["accent"]};
+}}
+
+QSpinBox::up-button, QDoubleSpinBox::up-button,
+QSpinBox::down-button, QDoubleSpinBox::down-button {{
+    background: {COLORS["bg_card"]};
+    border: none;
+    border-left: 1px solid {COLORS["border"]};
+    width: 20px;
+}}
+
+QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,
+QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {{
+    background: {COLORS["accent_soft"]};
 }}
 
 QComboBox::drop-down {{
@@ -220,19 +292,23 @@ QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
 
 QCheckBox {{
     spacing: 10px;
+    color: {COLORS["text"]};
+    font-weight: 500;
+    background: transparent;
+    min-height: 26px;
 }}
 
-QCheckBox::indicator {{
-    width: 20px;
-    height: 20px;
+QCheckBox:disabled {{
+    color: {COLORS["text_muted"]};
+}}
+
+QToolTip {{
+    background-color: {COLORS["bg_elevated"]};
+    color: {COLORS["text"]};
+    border: 1px solid {COLORS["accent"]};
+    padding: 8px 10px;
     border-radius: 6px;
-    border: 1px solid {COLORS["border"]};
-    background: {COLORS["bg_card"]};
-}}
-
-QCheckBox::indicator:checked {{
-    background: {COLORS["accent"]};
-    border-color: {COLORS["accent"]};
+    font-size: 12px;
 }}
 
 QTextEdit {{
@@ -249,3 +325,63 @@ QDialog {{
     background-color: {COLORS["bg_dark"]};
 }}
 """
+
+
+class RazorStyle(QProxyStyle):
+    """Fusion checkboxes with a white tick on the red accent square."""
+
+    def __init__(self) -> None:
+        super().__init__("Fusion")
+
+    def sizeFromContents(self, contents_type, option, size, widget=None):
+        size = super().sizeFromContents(contents_type, option, size, widget)
+        if contents_type == QStyle.ContentsType.CT_CheckBox:
+            size.setHeight(max(int(size.height()), 26))
+        return size
+
+    def pixelMetric(self, metric, option=None, widget=None):
+        if metric in (
+            QStyle.PixelMetric.PM_IndicatorWidth,
+            QStyle.PixelMetric.PM_IndicatorHeight,
+        ):
+            return 18
+        return super().pixelMetric(metric, option, widget)
+
+    def drawPrimitive(self, element, option, painter, widget=None):
+        if element != QStyle.PrimitiveElement.PE_IndicatorCheckBox:
+            super().drawPrimitive(element, option, painter, widget)
+            return
+
+        rect = option.rect.adjusted(1, 1, -1, -1)
+        checked = bool(option.state & QStyle.StateFlag.State_On)
+        hover = bool(option.state & QStyle.StateFlag.State_MouseOver)
+        disabled = not bool(option.state & QStyle.StateFlag.State_Enabled)
+
+        painter.save()
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        if checked and not disabled:
+            painter.setBrush(QColor(COLORS["accent"]))
+            painter.setPen(QPen(QColor(COLORS["accent"]), 1))
+        else:
+            painter.setBrush(QColor(COLORS["bg_elevated"]))
+            border = COLORS["accent"] if hover and not disabled else COLORS["border"]
+            painter.setPen(QPen(QColor(border), 1))
+        painter.drawRoundedRect(rect, 4, 4)
+
+        if checked:
+            tick = QColor("#ffffff") if not disabled else QColor(COLORS["text_muted"])
+            pen = QPen(tick, max(2.0, rect.width() / 8.0))
+            pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            pen.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
+            painter.setPen(pen)
+            x, y, w, h = rect.x(), rect.y(), rect.width(), rect.height()
+            painter.drawLine(
+                int(x + w * 0.22), int(y + h * 0.52),
+                int(x + w * 0.42), int(y + h * 0.72),
+            )
+            painter.drawLine(
+                int(x + w * 0.42), int(y + h * 0.72),
+                int(x + w * 0.78), int(y + h * 0.28),
+            )
+        painter.restore()
+

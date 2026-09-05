@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import QApplication
 
 from src.main_window import MainWindow, _load_app_icon
 from src.splash import SplashScreen
-from src.theme import APP_STYLESHEET
+from src.theme import APP_STYLESHEET, RazorStyle
 
 
 def main() -> int:
@@ -17,7 +17,7 @@ def main() -> int:
     app = QApplication(sys.argv)
     app.setApplicationName("RAZOR-Auto Labeler")
     app.setWindowIcon(_load_app_icon())
-    app.setStyle("Fusion")
+    app.setStyle(RazorStyle())
     app.setStyleSheet(APP_STYLESHEET)
 
     splash = SplashScreen()

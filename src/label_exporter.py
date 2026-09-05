@@ -427,21 +427,43 @@ def save_annotated_image(
     image_path: Path,
     detections: list[Detection],
     output_path: Path,
+    max_side: int | None = 1600,
 ) -> Path:
-    """Draw bounding boxes on the image and save a visual preview."""
+    """Draw bounding boxes on the image and save a visual preview.
+
+    Previews are downscaled by default: a folder of 50 MP source frames would
+    otherwise be duplicated at full size, which costs tens of gigabytes and
+    shows no more than the smaller version does.
+    """
     import cv2
 
     image = cv2.imread(str(image_path))
     if image is None:
         raise ValueError(f"Could not read image: {image_path}")
 
+    scale = 1.0
+    if max_side:
+        longest = max(image.shape[:2])
+        if longest > max_side:
+            scale = max_side / longest
+            image = cv2.resize(
+                image,
+                (round(image.shape[1] * scale), round(image.shape[0] * scale)),
+                interpolation=cv2.INTER_AREA,
+            )
+
     for det in detections:
-        x1 = max(0, int(det.x1))
-        y1 = max(0, int(det.y1))
-        x2 = min(image.shape[1], int(det.x2))
-        y2 = min(image.shape[0], int(det.y2))
+        x1 = max(0, int(det.x1 * scale))
+        y1 = max(0, int(det.y1 * scale))
+        x2 = min(image.shape[1], int(det.x2 * scale))
+        y2 = min(image.shape[0], int(det.y2 * scale))
 
         cv2.rectangle(image, (x1, y1), (x2, y2), BOX_COLOR, BOX_THICKNESS)
+
+        # A shrunk frame can hold hundreds of small boxes; captions on those
+        # would cover the image rather than describe it.
+        if min(x2 - x1, y2 - y1) < 26:
+            continue
 
         label = f"{det.class_name} {det.confidence * 100:.0f}%"
         font = cv2.FONT_HERSHEY_SIMPLEX

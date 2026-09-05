@@ -44,14 +44,14 @@ def main() -> int:
     from src.class_config import ClassMapping, build_mappings_from_model
     from src.main_window import MainWindow, _load_app_icon
     from src.splash import SplashScreen
-    from src.theme import APP_STYLESHEET
+    from src.theme import APP_STYLESHEET, RazorStyle
 
     DOCS.mkdir(parents=True, exist_ok=True)
 
     app = QApplication(sys.argv)
     app.setApplicationName("RAZOR-Auto Labeler")
     app.setWindowIcon(_load_app_icon())
-    app.setStyle("Fusion")
+    app.setStyle(RazorStyle())
     app.setStyleSheet(APP_STYLESHEET)
 
     splash = SplashScreen()
@@ -80,7 +80,7 @@ def main() -> int:
             ClassMapping(7, "truck", "vehicle", True),
         ]
     except Exception:
-        window.model_label.setText("● Model: yolov8n.pt")
+        window.model_label.setText("yolov8n.pt")
         window.model_label.setObjectName("statusOk")
         window.class_mappings = [
             ClassMapping(0, "person", "person", True),
